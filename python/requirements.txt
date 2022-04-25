@@ -1,0 +1,7 @@
+pandas
+tensorflow
+schedule
+sqlalchemy
+mysql-connector-python
+python-binance
+scikit-learn

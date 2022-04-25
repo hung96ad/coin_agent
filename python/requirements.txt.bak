@@ -1,0 +1,9 @@
+numpy
+h5py
+matplotlib
+sklearn
+pandas
+tensorflow==1.11.0
+keras
+mysql-connector-python
+python-binance

@@ -1,0 +1,205 @@
+<?php if(!defined('BASEPATH')) exit('No direct script access allowed');
+
+class Model_coin_info extends CI_Model
+{
+
+    function get_data()
+    {
+        $this->db->select("symbol, prediction, suggestionType, suggestionPrice, image, rank, totalGain, initial_money, FROM_UNIXTIME((suggestionDate-999)/1000, '%Y-%m-%d %H:%i:%s') date");
+        $this->db->from('coin_info');
+
+        $this->db->where('isPrediction', 1);
+        $this->db->where('status', 'TRADING');
+        $this->db->where('quoteAsset', 'USDT');
+        $this->db->order_by('rank', 'ASC');
+        $query = $this->db->get();
+        
+        $result = $query->result();        
+        return $result;
+    }
+
+    function get_coin_info_by_symbol($symbol = 'BTCUSDT')
+    {
+        $this->db->select("id, symbol, predictions, initial_money, Volume, suggestionType, suggestionPrice");
+        $this->db->from('coin_info');
+        $this->db->where('symbol', $symbol);
+        $this->db->where('isPrediction', 1);
+        $this->db->where('status', 'TRADING');
+        $query = $this->db->get();
+        $result = $query->row();
+        return $result;
+    }
+
+    function get_klines_by_id($id_symbol = 12, $limit=300)
+    {
+        $this->db->select("FROM_UNIXTIME(Close_time/1000-86399.999, '%Y-%m-%d') date,
+        `Open`,
+        High,
+        Low,
+        `Close`,
+        volume, 
+        `Close` prediction");
+
+        $this->db->from('klines');
+        $this->db->where('id_symbol', $id_symbol);
+        $this->db->order_by('Close_time', 'DESC');
+        $this->db->limit($limit);
+        $query = $this->db->get();
+        $object = [
+            'date' => [],
+            'data' => [],
+            'volume' => [],
+            'prediction' => []
+        ];
+        foreach ($query->result() as $row) 
+        {
+            array_push($object['date'], $row->date);
+            array_push($object['data'], [$row->Open, $row->Close, $row->High, $row->Low]);
+            array_push($object['volume'], $row->volume);
+            array_push($object['prediction'], $row->prediction);
+        }
+        return $object;
+    }
+
+    function get_trade_by_id($id_symbol = 12)
+    {
+        $this->db->select("FROM_UNIXTIME(Close_time/1000-86399.999, '%Y-%m-%d') close_time,
+        status,
+        gain,
+        price,
+        id_kline,
+        investment");
+        $this->db->from('trade');
+        $this->db->where('id_symbol', $id_symbol);
+        $this->db->order_by('Close_time', 'ASC');
+        $query = $this->db->get();
+        $object = [
+            'close_time' => [],
+            'status' => [],
+            'gain' => [],
+            'price' => [],
+            'id_kline' => [],
+            'investment' => []
+        ];
+        foreach ($query->result() as $row) 
+        {
+            array_push($object['close_time'], $row->close_time);
+            array_push($object['status'], $row->status);
+            array_push($object['gain'], $row->gain);
+            array_push($object['price'], $row->price);
+            array_push($object['id_kline'], $row->id_kline);
+            array_push($object['investment'], $row->investment);
+        }
+        return $object;
+    }
+
+    function get_chart($symbol = 'BTCUSDT')
+    {
+        $coin_info = $this->get_coin_info_by_symbol($symbol);
+        if ($coin_info)
+        {
+            $klines = $this->get_klines_by_id($coin_info->id);
+            $trade = $this->get_trade_by_id($coin_info->id);
+
+            return [
+                'klines'=> $klines,
+                'trade'=> $trade,
+                'coin_info'=> $coin_info,
+        ];
+        }
+        return $coin_info;
+    }
+    
+    function get_coin_info()
+    {
+        $this->db->select('id, symbol, quoteAsset, isPrediction');
+        $this->db->from('coin_info');
+
+        $this->db->where('status', 'TRADING');
+        $query = $this->db->get();
+        
+        $result = $query->result();        
+        return $result;
+    }
+
+    function update_coin_info($data)
+    {
+        $this->db->update_batch('coin_info', $data, 'id');
+        # update refresh
+        $this->db->set('isRefresh', 1);
+        $this->db->where('id', 0);
+        $this->db->update('config'); 
+        return true;
+    }
+
+    function resetTrain(){
+        $this->db->set('isRefresh', 1);
+        $this->db->where('id', 0);
+        $this->db->update('config'); 
+    }
+
+    function get_columns(){
+        $this->db->select('*');
+        $this->db->from('columns_show');
+        $query = $this->db->get();
+        $result = $query->result();        
+        return $result;
+    }
+
+    function update_columns_show($data)
+    {
+        $this->db->update_batch('columns_show', $data, 'id');
+        return true;
+    }
+
+    function get_config_index(){
+        $this->db->select('c.*, d.name, d.wallet');
+        $this->db->from('config_index c ');
+        $this->db->join('donate d', 'd.id = c.donate');
+        $query = $this->db->get();
+        $result = $query->result();        
+        return $result;
+    }
+    function get_config_index_only(){
+        $this->db->select('*');
+        $this->db->from('config_index c');
+        $query = $this->db->get();
+        $result = $query->result()[0];        
+        return $result;
+    }
+
+    function update_config_index($data)
+    {
+        $this->db->update_batch('config_index', $data, 'id');
+        return true;
+    }
+    function insert_donate($data)
+    {
+        $this->db->insert('donate', $data);
+        return true;
+    }
+
+    function get_donate($name)
+    {
+        $this->db->select('*');
+        $this->db->from('donate');
+        $this->db->where('name', $name);
+        $query = $this->db->get();
+        $result = $query->result()[0];        
+        return $result;
+    }
+
+    function update_donate($data)
+    {
+        $this->db->update_batch('donate', $data, 'id_real');
+        return true;
+    }
+
+    function deleteWallet($name){
+        $this->db->where('name', $name);
+        $this->db->delete('donate');
+        return 1;
+    }
+}
+
+  

@@ -1,0 +1,159 @@
+<html>
+
+<head>
+  <title>Binance Crypto Currency Price Prediction Tracker System</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link href="css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection" />
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+  <style>
+    .close-first {
+      display: none;
+    }
+  </style>
+  <link rel="stylesheet" href="./css/bootstrap.min.css" />
+  <script src="./js/jquery.slim.min.js"></script>
+  <script src="./js/bootstrap.bundle.min.js"></script>
+</head>
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+    aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#footer">About</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#contact">Contact Us</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <h2 class="text-center">
+    Binance Crypto Currency Price Prediction Tracker System
+  </h2>
+  <p class="text-center">
+    Crypto Currency price prediction tracking system and trading simulation on
+    Binance exchange
+  </p>
+</div>
+<div class="row" style="margin-left: 20px; margin-right: 10px">
+  <div class="col-md-12">
+    <div id="div_output" style="height: 500px"></div>
+  </div>
+</div>
+<br />
+<div class="row" style="margin-left: 20px; margin-right: 10px">
+  <ul class="collapsible col-md-12" data-collapsible="accordion">
+    <li>
+      <div class="collapsible-header">
+        <i class="material-icons" style="font-size: 3rem">settings</i>
+        <div class="row" style="margin-bottom: 10px; margin-top: 10px">
+          <div class="col-md-10">Settings</div>
+          <div class="col-md-2">
+            <button id="simulation" class="btn btn-primary right" onClick="changeVolume()">
+              Simulation
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="collapsible-body" style="display: none">
+        <span>
+          <div class="row center">
+            <div class="col-md-3">Simulation</div>
+            <div class="input-field col-md-3">
+              <input id="initialmoney" value="10000" type="number" class="validate tooltipped valid"
+                data-position="bottom" data-delay="50" data-tooltip="Money in for simulation" />
+              <label class="active">Initial money(usd)</label>
+            </div>
+            <div class="input-field col-md-3">
+              <input id="volumemax" type="number" value="1" class="validate tooltipped valid" data-position="bottom"
+                data-delay="50" data-tooltip="Max unit to buy" />
+              <label class="active">Volume(unit)</label>
+            </div>
+            <div class="input-field col-md-3">
+              <input id="margin" type="number" value="1" class="validate tooltipped valid" data-position="bottom"
+                data-delay="50" data-tooltip="Level margin" />
+              <label class="active">Margin</label>
+            </div>
+          </div>
+        </span>
+      </div>
+    </li>
+  </ul>
+</div>
+<br />
+<div class="col-md-12" id="alert"></div>
+
+<div class="row table-responsive" style="margin-left: 20px; margin-right: 10px">
+  <ul class="collapsible" data-collapsible="accordion">
+    <li>
+      <div class="collapsible-header">
+        <i class="material-icons">archive</i>Simulation log
+      </div>
+      <div class="collapsible-body">
+        <span id="log-invest"></span>
+        <span>
+          <table class="bordered highlight">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Action</th>
+                <th>Price</th>
+                <th>Investment</th>
+                <th>Equity</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </span>
+      </div>
+    </li>
+  </ul>
+</div>
+<div class="row center" id="color-investment"></div>
+<div class="container">
+  <footer class="font-small" id="footer">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-4 text-center">
+          <h5 class="text-uppercase" id="contact">Contact</h5>
+          <ul class="list-unstyled">
+            <li id="email">
+              Email:
+              <a href="mailto:huyblockchain@gmail.com">huyblockchain@gmail.com</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-4 text-center">
+          <h5 class="text-uppercase">Donate</h5>
+          <ul class="list-unstyled" id="donate">
+            <li>BTC: <a href="#">1L4kfwdKwjRLjnfRRzFHw9Xot8z23yuPLU</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/materialize.min.js"></script>
+<script src="js/d3.v3.min.js"></script>
+<script src="js/numeric-1.2.6.min.js"></script>
+<script src="js/numjs.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/echarts.min.js"></script>
+<script src="js/echarts-gl.min.js"></script>
+<script src="js/papaparse.min.js"></script>
+<script src="init.js"></script>
+
+</html>
